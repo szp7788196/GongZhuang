@@ -5,12 +5,12 @@
 
 
 
-#define CD4051_BIT0 PBout(3)
+#define CD4051_BIT0 PBout(5)
 #define CD4051_BIT1 PBout(4)
-#define CD4051_BIT2 PBout(5)
-#define CD4051_BIT3 PBout(6)
+#define CD4051_BIT2 PBout(3)
+#define CD4051_BIT3 PBout(8)
 #define CD4051_BIT4 PBout(7)
-#define CD4051_BIT5 PBout(8)
+#define CD4051_BIT5 PBout(6)
 
 
 

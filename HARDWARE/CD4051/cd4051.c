@@ -26,28 +26,28 @@ void CD4051SetChannel(u8 ch)
 {
 	switch(ch)
 	{
-		case 0:					//1-1
-			CD4051_BIT0 = 0;
+		case 0:					//1-4 
+			CD4051_BIT0 = 1;
 			CD4051_BIT1 = 0;
-			CD4051_BIT2 = 1;
+			CD4051_BIT2 = 0;
 			CD4051_BIT3 = 1;
 			CD4051_BIT4 = 1;
 			CD4051_BIT5 = 1;
 		break;
 		
-		case 1:					//1-3
-			CD4051_BIT0 = 0;
-			CD4051_BIT1 = 1;
-			CD4051_BIT2 = 1;
-			CD4051_BIT3 = 1;
-			CD4051_BIT4 = 1;
-			CD4051_BIT5 = 1;
-		break;
-		
-		case 2:					//1-5
+		case 1:					//1-5
 			CD4051_BIT0 = 1;
 			CD4051_BIT1 = 0;
 			CD4051_BIT2 = 1;
+			CD4051_BIT3 = 1;
+			CD4051_BIT4 = 1;
+			CD4051_BIT5 = 1;
+		break;
+		
+		case 2:					//1-6
+			CD4051_BIT0 = 1;
+			CD4051_BIT1 = 1;
+			CD4051_BIT2 = 0;
 			CD4051_BIT3 = 1;
 			CD4051_BIT4 = 1;
 			CD4051_BIT5 = 1;

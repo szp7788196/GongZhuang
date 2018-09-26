@@ -6,15 +6,15 @@
 #include "includes.h"					//os 使用	  
 #endif
 
-u16 Usart1RxCnt = 0;
-u16 OldUsart1RxCnt = 0;
-u16 Usart1FrameLen = 0;
-u8 Usart1RxBuf[Usart1RxLen];
-u8 Usart1TxBuf[Usart1TxLen];
-u8 Usart1RecvEnd = 0;
-u8 Usart1Busy = 0;
-u16 Usart1SendLen = 0;
-u16 Usart1SendNum = 0;
+u16 Usart3RxCnt = 0;
+u16 OldUsart3RxCnt = 0;
+u16 Usart3FrameLen = 0;
+u8 Usart3RxBuf[Usart3RxLen];
+u8 Usart3TxBuf[Usart3TxLen];
+u8 Usart3RecvEnd = 0;
+u8 Usart3Busy = 0;
+u16 Usart3SendLen = 0;
+u16 Usart3SendNum = 0;
 
 #if 1
 #pragma import(__use_no_semihosting)             
@@ -33,29 +33,29 @@ void _sys_exit(int x)
 //重定义fputc函数 
 int fputc(int ch, FILE *f)
 { 	
-	while((USART1->SR&0X40)==0);//循环发送,直到发送完毕   
-	USART1->DR = (u8) ch;      
+	while((USART3->SR&0X40)==0);//循环发送,直到发送完毕   
+	USART3->DR = (u8) ch;      
 	return ch;
 }
 #endif 
 
 
 
-UART_HandleTypeDef UART1_Handler; //UART句柄
+UART_HandleTypeDef UART3_Handler; //UART句柄
 
 //初始化IO 串口1 
 //bound:波特率
 void uart_init(u32 bound)
 {	
 	//UART 初始化设置
-	UART1_Handler.Instance=USART1;					    //USART1
-	UART1_Handler.Init.BaudRate=bound;				    //波特率
-	UART1_Handler.Init.WordLength=UART_WORDLENGTH_8B;   //字长为8位数据格式
-	UART1_Handler.Init.StopBits=UART_STOPBITS_1;	    //一个停止位
-	UART1_Handler.Init.Parity=UART_PARITY_NONE;		    //无奇偶校验位
-	UART1_Handler.Init.HwFlowCtl=UART_HWCONTROL_NONE;   //无硬件流控
-	UART1_Handler.Init.Mode=UART_MODE_TX_RX;		    //收发模式
-	HAL_UART_Init(&UART1_Handler);					    //HAL_UART_Init()会使能UART1
+	UART3_Handler.Instance=USART3;					    //USART1
+	UART3_Handler.Init.BaudRate=bound;				    //波特率
+	UART3_Handler.Init.WordLength=UART_WORDLENGTH_8B;   //字长为8位数据格式
+	UART3_Handler.Init.StopBits=UART_STOPBITS_1;	    //一个停止位
+	UART3_Handler.Init.Parity=UART_PARITY_NONE;		    //无奇偶校验位
+	UART3_Handler.Init.HwFlowCtl=UART_HWCONTROL_NONE;   //无硬件流控
+	UART3_Handler.Init.Mode=UART_MODE_TX_RX;		    //收发模式
+	HAL_UART_Init(&UART3_Handler);					    //HAL_UART_Init()会使能UART1
 	
 	//HAL_UART_Receive_IT(&UART1_Handler, (u8 *)aRxBuffer, RXBUFFERSIZE);//该函数会开启接收中断：标志位UART_IT_RXNE，并且设置接收缓冲以及接收缓冲接收最大数据量(使用回调函数处理中断需要调用该函数）
   
@@ -70,105 +70,105 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
     //GPIO端口设置
 	GPIO_InitTypeDef GPIO_Initure;
 	
-	if(huart->Instance==USART1)//如果是串口1，进行串口1 MSP初始化
+	if(huart->Instance==USART3)//如果是串口1，进行串口1 MSP初始化
 	{
-		__HAL_RCC_GPIOA_CLK_ENABLE();			//使能GPIOA时钟
-		__HAL_RCC_USART1_CLK_ENABLE();			//使能USART1时钟
+		__HAL_RCC_GPIOB_CLK_ENABLE();			//使能GPIOA时钟
+		__HAL_RCC_USART3_CLK_ENABLE();			//使能USART1时钟
 	
-		GPIO_Initure.Pin=GPIO_PIN_9;			//PA9
+		GPIO_Initure.Pin=GPIO_PIN_10;			//PA9
 		GPIO_Initure.Mode=GPIO_MODE_AF_PP;		//复用推挽输出
 		GPIO_Initure.Pull=GPIO_PULLUP;			//上拉
 		GPIO_Initure.Speed=GPIO_SPEED_FAST;		//高速
 		GPIO_Initure.Alternate=GPIO_AF7_USART1;	//复用为USART1
-		HAL_GPIO_Init(GPIOA,&GPIO_Initure);	   	//初始化PA9
+		HAL_GPIO_Init(GPIOB,&GPIO_Initure);	   	//初始化PA9
 
-		GPIO_Initure.Pin=GPIO_PIN_10;			//PA10
-		HAL_GPIO_Init(GPIOA,&GPIO_Initure);	   	//初始化PA10
+		GPIO_Initure.Pin=GPIO_PIN_11;			//PA10
+		HAL_GPIO_Init(GPIOB,&GPIO_Initure);	   	//初始化PA10
 		__HAL_UART_DISABLE_IT(huart,UART_IT_TC);
 		__HAL_UART_ENABLE_IT(huart,UART_IT_RXNE);		//开启接收中断
-		HAL_NVIC_EnableIRQ(USART1_IRQn);				//使能USART1中断通道
-		HAL_NVIC_SetPriority(USART1_IRQn,3,3);			//抢占优先级3，子优先级3
+		HAL_NVIC_EnableIRQ(USART3_IRQn);				//使能USART1中断通道
+		HAL_NVIC_SetPriority(USART3_IRQn,3,3);			//抢占优先级3，子优先级3
 	
 	}
 }
 
-void Usart1ReciveFrameEnd(void)
+void Usart3ReciveFrameEnd(void)
 {
-	if(Usart1RxCnt)
+	if(Usart3RxCnt)
 	{
-		if(OldUsart1RxCnt == Usart1RxCnt)
+		if(OldUsart3RxCnt == Usart3RxCnt)
 		{
-			Usart1FrameLen = Usart1RxCnt;
-			OldUsart1RxCnt = 0;
-			Usart1RxCnt = 0;
-			Usart1RecvEnd = 0xAA;
+			Usart3FrameLen = Usart3RxCnt;
+			OldUsart3RxCnt = 0;
+			Usart3RxCnt = 0;
+			Usart3RecvEnd = 0xAA;
 		}
 		else
 		{
-			OldUsart1RxCnt = Usart1RxCnt;
+			OldUsart3RxCnt = Usart3RxCnt;
 		}
 	}
 }
 
 //串口1中断服务程序
-void USART1_IRQHandler(void)                	
+void USART3_IRQHandler(void)                	
 { 
 	u8 rxdata;
 
-	if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_RXNE)!=RESET))  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_RXNE)!=RESET))  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
-        HAL_UART_Receive(&UART1_Handler,&rxdata,1,1000); 
+        HAL_UART_Receive(&UART3_Handler,&rxdata,1,1000); 
 		
-		if(Usart1RxCnt<Usart1RxLen && Usart1Busy == 0)
+		if(Usart3RxCnt<Usart3RxLen && Usart3Busy == 0)
 		{
-			Usart1RxBuf[Usart1RxCnt]=rxdata;
-			Usart1RxCnt++;
+			Usart3RxBuf[Usart3RxCnt]=rxdata;
+			Usart3RxCnt++;
 		}
 		
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler,UART_FLAG_RXNE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler,UART_FLAG_RXNE);
 	}
 	
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_CTS)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_CTS)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_CTS);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_CTS);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_LBD)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_LBD)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_LBD);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_LBD);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_TXE)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TXE)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_TXE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_TXE);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_TC)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_TC)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_TC);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_TC);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_IDLE)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_IDLE)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_IDLE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_IDLE);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_ORE)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_ORE)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_ORE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_ORE);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_NE)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_NE)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_NE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_NE);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_FE)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_FE)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_FE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_FE);
 	}
-	else if((__HAL_UART_GET_FLAG(&UART1_Handler,UART_FLAG_PE)!=RESET))
+	else if((__HAL_UART_GET_FLAG(&UART3_Handler,UART_FLAG_PE)!=RESET))
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, UART_FLAG_PE);
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, UART_FLAG_PE);
 	}
 	else
 	{
-		__HAL_UART_CLEAR_FLAG(&UART1_Handler, ((uint32_t)0x004FFFFF));
+		__HAL_UART_CLEAR_FLAG(&UART3_Handler, ((uint32_t)0x004FFFFF));
 	}
-	HAL_UART_IRQHandler(&UART1_Handler);	
+	HAL_UART_IRQHandler(&UART3_Handler);	
 
 } 
 

@@ -16,7 +16,7 @@ u8 GetDeviceUUID(u8 *uuid)
 	u8 send_buf2[10]="AT+UUID\r\n\0";
 	
 	RE_SEND1:
-	HAL_UART_Transmit(&UART1_Handler, send_buf1, 13,1000);
+	HAL_UART_Transmit(&UART3_Handler, send_buf1, 13,1000);
 	
 	i = 10;
 	
@@ -24,13 +24,13 @@ u8 GetDeviceUUID(u8 *uuid)
 	{
 		delay_ms(300);
 		
-		if(Usart1RecvEnd == 0xAA)
+		if(Usart3RecvEnd == 0xAA)
 		{
-			Usart1RecvEnd = 0;
+			Usart3RecvEnd = 0;
 			
-			if(MyStrstr(Usart1RxBuf, (u8 *)"OK", Usart1FrameLen, 2) != 0xFFFF)
+			if(MyStrstr(Usart3RxBuf, (u8 *)"OK", Usart3FrameLen, 2) != 0xFFFF)
 			{
-				memset(Usart1RxBuf,0,Usart1FrameLen);
+				memset(Usart3RxBuf,0,Usart3FrameLen);
 				i = 1;
 				ret = 1;
 			}
@@ -52,7 +52,7 @@ u8 GetDeviceUUID(u8 *uuid)
 	}
 	
 	RE_SEND2:
-	HAL_UART_Transmit(&UART1_Handler, send_buf2, 9,1000);
+	HAL_UART_Transmit(&UART3_Handler, send_buf2, 9,1000);
 	
 	i = 10;
 	
@@ -60,15 +60,15 @@ u8 GetDeviceUUID(u8 *uuid)
 	{
 		delay_ms(300);
 		
-		if(Usart1RecvEnd == 0xAA)
+		if(Usart3RecvEnd == 0xAA)
 		{
-			Usart1RecvEnd = 0;
+			Usart3RecvEnd = 0;
 			
-			if(MyStrstr(Usart1RxBuf, (u8 *)"OK", Usart1FrameLen, 2) != 0xFFFF)
+			if(MyStrstr(Usart3RxBuf, (u8 *)"OK", Usart3FrameLen, 2) != 0xFFFF)
 			{
-				get_str1(Usart1RxBuf, (u8 *)"uuid: ", 1, (u8 *)"\r\n\r\nOK", 1, uuid);
+				get_str1(Usart3RxBuf, (u8 *)"uuid: ", 1, (u8 *)"\r\n\r\nOK", 1, uuid);
 				
-				memset(Usart1RxBuf,0,Usart1FrameLen);
+				memset(Usart3RxBuf,0,Usart3FrameLen);
 				i = 1;
 				ret = strlen((char *)uuid);
 			}

@@ -23,6 +23,7 @@ int main(void)
 	TIM3_Init(100,9000);			//初始化定时器
     SDRAM_Init();                   //SDRAM初始化
     LCD_Init();                     //LCD初始化
+	CD4051_Init();
 	
 	POINT_COLOR=RED; 
 
@@ -38,7 +39,7 @@ int main(void)
     {
 		for(i = 0; i < 10; i ++)
 		{
-			CD4051SetChannel(i);
+			CD4051SetChannel(9 - i);
 			
 			memset(UUID,0,37);
 		

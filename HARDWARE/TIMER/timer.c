@@ -62,7 +62,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if(htim==(&TIM3_Handler))
     {
-		Usart1ReciveFrameEnd();
+		Usart3ReciveFrameEnd();
 		
         LED0=!LED0;        //LED1·´×ª
 		
