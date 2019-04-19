@@ -1,8 +1,20 @@
 #include "common.h"
 #include "lcd.h"
 
-u8 UUID[37];
-u8 StrNull[37] = "------------------------------------\0";
+u8 UUID[18];
+u8 StrNull[18] = "-----------------\0";
+
+u8 UUIDGroup[10][18];
+
+void ResetUUIDGroup(void)
+{
+	u8 i = 0;
+	
+	for(i = 0; i < 10; i ++)
+	{
+		memcpy(UUIDGroup[i],StrNull,18);
+	}
+}
 
 u16 MyStrstr(u8 *str1, u8 *str2, u16 str1_len, u16 str2_len)
 {

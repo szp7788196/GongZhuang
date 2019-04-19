@@ -9,6 +9,7 @@
 #include "protocol.h"
 #include "common.h"
 #include "cd4051.h"
+#include "at_protocol.h"
 
 int main(void)
 {
@@ -20,7 +21,7 @@ int main(void)
     uart_init(9600);              	//初始化USART
     LED_Init();                     //初始化LED 
     KEY_Init();                     //初始化按键
-	TIM3_Init(100,9000);			//初始化定时器
+	TIM3_Init(1000,9000);			//初始化定时器
     SDRAM_Init();                   //SDRAM初始化
     LCD_Init();                     //LCD初始化
 	CD4051_Init();
@@ -31,6 +32,8 @@ int main(void)
 	BACK_COLOR = BLACK;
 	POINT_COLOR = GREEN;
 	
+	ResetUUIDGroup();
+	AT_CommandInit();
 	ShowSerialNumber();
 	
 	POINT_COLOR = WHITE;
@@ -41,17 +44,20 @@ int main(void)
 		{
 			CD4051SetChannel(9 - i);
 			
-			memset(UUID,0,37);
+			memset(UUID,0,18);
 		
 			ret = GetDeviceUUID(UUID);
 			
-			if(ret == 36)
+			if(ret == 17)
 			{
 				LCD_ShowString(10 + 48,80 + (40 * i),576,32,32,UUID); 
+				
+				memcpy(UUIDGroup[i],UUID,17);
 			}
 			else
 			{
-				LCD_ShowString(10 + 48,80 + (40 * i),576,32,32,StrNull); 
+				LCD_ShowString(10 + 48,80 + (40 * i),576,32,32,StrNull);
+				memcpy(UUIDGroup[i],StrNull,17);
 			}
 		}
 	}

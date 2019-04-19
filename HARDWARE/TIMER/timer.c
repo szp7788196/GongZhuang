@@ -1,6 +1,7 @@
 #include "timer.h"
 #include "usart.h"
 #include "led.h"
+#include "at_protocol.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F429开发板
@@ -49,7 +50,6 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim)
 	}
 }
 
-
 //定时器3中断服务函数
 void TIM3_IRQHandler(void)
 {
@@ -60,9 +60,23 @@ u16 timer3_cnt = 0;
 //回调函数，定时器中断服务函数调用
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+	u16 ret = 0;
+	
     if(htim==(&TIM3_Handler))
     {
+		Usart1ReciveFrameEnd();
 		Usart3ReciveFrameEnd();
+		
+		if(Usart1RecvEnd == 0xAA)
+		{
+			Usart1RecvEnd = 0;
+			
+			ret = AT_CommandDataAnalysis(Usart1RxBuf,Usart1FrameLen,Usart1TxBuf);
+			
+			HAL_UART_Transmit(&UART1_Handler, Usart1TxBuf, ret,1000);
+			
+			memset(Usart1TxBuf,0,ret);
+		}
 		
         LED0=!LED0;        //LED1反转
 		

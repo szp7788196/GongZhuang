@@ -178,7 +178,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -440,6 +440,16 @@
               <FileName>common.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\common.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_protoco.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\at_protoco.c</FilePath>
+            </File>
+            <File>
+              <FileName>malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\malloc.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -7,11 +7,12 @@
 #include "stdio.h"
 
 
-extern u8 UUID[37];
-extern u8 StrNull[37];
+extern u8 UUID[18];
+extern u8 StrNull[18];
+extern u8 UUIDGroup[10][18];
 
 
-
+void ResetUUIDGroup(void);
 u16 MyStrstr(u8 *str1, u8 *str2, u16 str1_len, u16 str2_len);
 u8 GetDatBit(u32 dat);
 u32 GetADV(u8 len);
